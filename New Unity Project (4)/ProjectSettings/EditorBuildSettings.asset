@@ -4,5 +4,11 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/AstarPathfindingProject/ExampleScenes/Example6_Navmesh/NavmeshExample.unity
+    guid: 32536486e77cc4002ae78cd83c90bb2b
+  - enabled: 1
+    path: Assets/school/DemoScene/all_.unity
+    guid: 378551c9dbb787b4f9dd2e04ec1454e5
   m_configObjects: {}
