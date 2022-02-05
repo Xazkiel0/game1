@@ -51,15 +51,15 @@ public class FieldOfView : MonoBehaviour
 
     void FindVisibleTarget()
     {
-        Collider[] targetsCloseRad = Physics.OverlapSphere(transform.position, viewRad, targetMask);
-        Collider[] targetsInViewRad = Physics.OverlapSphere(transform.position, viewRad * 2, targetMask);
-
         if (visibleTargets.Count > 0)
             visibleTargets.Clear();
 
-        if (targetsInViewRad.Length == 0)
-            return;
+        if (!Physics.CheckSphere(transform.position, viewRad * 2, obsMask))
+            if (!Physics.CheckSphere(transform.position, viewRad, obsMask))
+                return;
 
+        Collider[] targetsCloseRad = Physics.OverlapSphere(transform.position, viewRad, targetMask);
+        Collider[] targetsInViewRad = Physics.OverlapSphere(transform.position, viewRad * 2, targetMask);
 
         for (int i = 0; i < targetsInViewRad.Length; i++)
         {
