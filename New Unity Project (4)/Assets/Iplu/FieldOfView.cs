@@ -10,26 +10,33 @@ public class FieldOfView : MonoBehaviour
     public float viewAngle;
     public LayerMask targetMask;
     public LayerMask obsMask;
-    public Vector3 respPoint;
+
+    Animator anim;
 
     public List<Transform> visibleTargets = new List<Transform>();
     NavMeshAgent agent;
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        respPoint = transform.position;
         StartCoroutine(FindTargetsWithDelay(.2f));
+        anim = GetComponent<Animator>();
     }
 
     private void Update()
     {
-        if (visibleTargets.Count > 0)
+        if (visibleTargets.Count <= 0)
         {
-            agent.SetDestination(nearestTarget().position);
-        }
-        else
-        {
+            anim.SetFloat("Speed", 0);
             agent.ResetPath();
+            return;
+        }
+        agent.SetDestination(nearestTarget().position);
+        anim.SetFloat("Speed", 1);
+        if (agent.remainingDistance <= agent.stoppingDistance)
+        {
+            anim.SetFloat("Speed", 0);
+            anim.SetTrigger("Attack");
+            return;
         }
     }
 
@@ -44,8 +51,16 @@ public class FieldOfView : MonoBehaviour
 
     void FindVisibleTarget()
     {
-        visibleTargets.Clear();
-        Collider[] targetsInViewRad = Physics.OverlapSphere(transform.position, viewRad, targetMask);
+        Collider[] targetsCloseRad = Physics.OverlapSphere(transform.position, viewRad, targetMask);
+        Collider[] targetsInViewRad = Physics.OverlapSphere(transform.position, viewRad * 2, targetMask);
+
+        if (visibleTargets.Count > 0)
+            visibleTargets.Clear();
+
+        if (targetsInViewRad.Length == 0)
+            return;
+
+
         for (int i = 0; i < targetsInViewRad.Length; i++)
         {
             Transform target = targetsInViewRad[i].transform;
@@ -54,22 +69,20 @@ public class FieldOfView : MonoBehaviour
             {
                 float dstToTarget = Vector3.Distance(transform.position, target.position);
                 if (!Physics.Raycast(transform.position, dirToTarget, dstToTarget, obsMask))
-                {
-                    if (!visibleTargets.Contains(target))
-                    {
-                        visibleTargets.Add(target);
-
-                    }
-                }
+                    visibleTargets.Add(target);
             }
+        }
+        for (int i = 0; i < targetsCloseRad.Length; i++)
+        {
+            Transform target = targetsCloseRad[i].transform;
+            visibleTargets.Add(target);
         }
     }
     public Vector3 DirFromAngle(float angleInDegrees, bool angleIsGlobal)
     {
         if (!angleIsGlobal)
-        {
             angleInDegrees += transform.eulerAngles.y;
-        }
+
         return new Vector3(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegrees * Mathf.Deg2Rad));
     }
     Transform nearestTarget()
