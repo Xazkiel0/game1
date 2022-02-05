@@ -12,9 +12,9 @@ TagManager:
   - 
   - Water
   - UI
-  - obstacles
-  - targets
-  - 
+  - Obstacle
+  - Player
+  - Enemy
   - 
   - 
   - 

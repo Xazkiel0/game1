@@ -11,8 +11,10 @@ public class FOVEditor : Editor
         FieldOfView fow = (FieldOfView)target;
         Handles.color = Color.white;
         Handles.DrawWireArc(fow.transform.position, Vector3.up, Vector3.forward, 360, fow.viewRad);
-        Vector3 viewAngleA = fow.DirFromAngle(-fow.viewAngle / 2, false);
-        Vector3 viewAngleB = fow.DirFromAngle(fow.viewAngle / 2, false);
+        Handles.color = Color.blue;
+        Vector3 viewAngleA = fow.DirFromAngle(-fow.viewAngle / 2, false) * 2;
+        Vector3 viewAngleB = fow.DirFromAngle(fow.viewAngle / 2, false) * 2;
+        Handles.DrawWireArc(fow.transform.position, Vector3.up, Vector3.forward, 360, fow.viewRad * 2);
         Handles.DrawLine(fow.transform.position, fow.transform.position + viewAngleA * fow.viewRad);
         Handles.DrawLine(fow.transform.position, fow.transform.position + viewAngleB * fow.viewRad);
 

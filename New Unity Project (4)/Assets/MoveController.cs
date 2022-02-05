@@ -6,6 +6,7 @@ public class MoveController : MonoBehaviour
 {
     CharacterController cr;
     Animator anim;
+    public Transform Camera;
     float turnSmoothTime = .1f;
     // Start is called before the first frame update
     float turnSmoothVel;
@@ -28,12 +29,14 @@ public class MoveController : MonoBehaviour
         if (dir.magnitude >= .1f && !Input.GetKey(KeyCode.LeftShift))
         {
             //mlaku
-            float targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
+            float targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg + Camera.eulerAngles.y;
 
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVel, turnSmoothTime);
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
-            cr.Move(dir * speed * Time.deltaTime);
+            Vector3 moveDirection = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+
+            cr.Move(moveDirection.normalized * speed * Time.deltaTime);
             anim.SetFloat("Speed", 1);
         }
         else if (dir.magnitude >= .1f && Input.GetKey(KeyCode.LeftShift))
