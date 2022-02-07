@@ -42,12 +42,14 @@ public class MoveController : MonoBehaviour
         else if (dir.magnitude >= .1f && Input.GetKey(KeyCode.LeftShift))
         {
             //mlayu
-            float targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
+            float targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg + Camera.eulerAngles.y;
 
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVel, turnSmoothTime);
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
-            cr.Move(dir * runSpeed * Time.deltaTime);
+            Vector3 moveDirection = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+
+            cr.Move(moveDirection.normalized * runSpeed * Time.deltaTime);
             anim.SetFloat("Speed", 2);
         }
         else if (dir.magnitude == 0f)
