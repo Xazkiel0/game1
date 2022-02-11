@@ -19,9 +19,7 @@ public class FOVEditor : Editor
         Handles.DrawLine(fow.transform.position, fow.transform.position + viewAngleB * fow.viewRad);
 
         Handles.color = Color.green;
-        foreach (Transform visTarget in fow.visibleTargets)
-        {
-            Handles.DrawLine(fow.transform.position, visTarget.position);
-        }
+        if (fow.visibleTargets != null)
+            Handles.DrawLine(fow.transform.position, fow.visibleTargets.position);
     }
 }

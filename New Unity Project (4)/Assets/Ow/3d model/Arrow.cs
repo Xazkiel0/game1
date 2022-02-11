@@ -19,14 +19,21 @@ public class Arrow : MonoBehaviour
     {
         
     }
-    private void OnTriggerEnter2D(Collider2D hitInfo)
+    private void OnTriggerEnter(Collider hitInfo)
     {
         EnemyHealth enemy = hitInfo.GetComponent<EnemyHealth>();
+        PlayerHealth Player = hitInfo.GetComponent<PlayerHealth>();
+
         if (enemy != null)
         {
             Debug.Log(enemy.transform.name);
             enemy.TakeDamage(damage);
             //anim.Play("Damaged", -1, 0f);
+        }
+        if (Player != null)
+        {
+            Debug.Log(Player.transform.name);
+            Player.TakeDamage(damage);
         }
         //GameObject Impact = Instantiate(ImpactEffect, transform.position, Quaternion.identity);
         if(BisaHancur == true)
