@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class HealthSc : MonoBehaviour
 {
-    public float damagedDuration = 2f;
-    public float currDurD = 2f;
-    public float currDurR = 1f;
+    public float shouldRegenAfter = 2f;
+    float currDurD = 2f;
+    float currDurR = 1f;
     public int hitCount = 0;
     public int maxHitCount = 3;
     public enum State
@@ -19,6 +19,7 @@ public class HealthSc : MonoBehaviour
 
     private void Start()
     {
+        currDurD = shouldRegenAfter;
     }
 
     // Update is called once per frame
@@ -34,7 +35,7 @@ public class HealthSc : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            currDurD = damagedDuration;
+            currDurD = shouldRegenAfter;
             currDurR = 1f;
             hitCount++;
             state = State.Damaged;
@@ -47,7 +48,7 @@ public class HealthSc : MonoBehaviour
         currDurD -= Time.deltaTime;
         if (currDurD <= 0)
         {
-            currDurD = damagedDuration;
+            currDurD = shouldRegenAfter;
             state = State.Regen;
             print("Start 2 Regen");
         }

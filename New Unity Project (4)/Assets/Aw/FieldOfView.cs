@@ -27,12 +27,12 @@ public class FieldOfView : MonoBehaviour
     {
         if (visibleTargets == null)
         {
-            anim.SetFloat("Speed", 0);
-            agent.ResetPath();
+            Deffak2.chasing = false;
             return;
         }
-        agent.SetDestination(visibleTargets.position);
         anim.SetFloat("Speed", 1);
+        Deffak2.chasing = true;
+        agent.SetDestination(visibleTargets.position);
         if (agent.remainingDistance <= agent.stoppingDistance)
         {
             anim.SetFloat("Speed", 0);
@@ -67,7 +67,7 @@ public class FieldOfView : MonoBehaviour
 
     void lookTarget()
     {
-        Vector3 lookPos = visibleTargets.position - transform.position;
+        Vector3 lookPos = (visibleTargets.position - transform.position).normalized;
         lookPos.y = 0;
         Quaternion rotation = Quaternion.LookRotation(lookPos);
         transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * turningMultiplier);

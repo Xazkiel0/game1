@@ -5,47 +5,69 @@ using UnityEngine.AI;
 
 public class Deffak2 : MonoBehaviour
 {
-    public Transform[] patrolPoints;
+    public List<Transform> patrolPoints = new List<Transform>();
     public int nextPatrol = 0;
 
     private NavMeshAgent agent;
-
-    enum EnemyState
-    {
-        PATROL, ATTACK, CHASE, NONE, BACK
-    }
-
-    EnemyState currState;
+    private Animator anim;
 
     public static bool chasing = false;
 
     // Start is called before the first frame update
+    private void Awake()
+    {
+    }
+
+    void findPatrolPoints()
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            Transform child = transform.GetChild(i);
+            if (child.CompareTag("Patrol Point"))
+            {
+                print(child.name);
+                patrolPoints.Add(child);
+            }
+        }
+    }
     void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
+        findPatrolPoints();
+        print(transform.name + patrolPoints.Count);
+        agent = GetComponentInChildren<NavMeshAgent>();
+        StartCoroutine(Patrol());
+        anim = agent.GetComponent<Animator>();
     }
+
 
     // Update is called once per frame
     void Update()
     {
-        // print(chasing);
         if (!chasing)
         {
-            Patrol();
+            Vector3 curr = patrolPoints[nextPatrol].position;
+            agent.SetDestination(curr);
+            if (reachPoint(1.5f))
+                anim.SetFloat("Speed", 0);
+            else
+                anim.SetFloat("Speed", 1);
         }
     }
 
-    void Patrol()
+    bool reachPoint(float dist)
     {
-        Vector3 curr = patrolPoints[nextPatrol].position;
-        agent.SetDestination(curr);
-        if (Vector3.Distance(transform.position, curr) <= 2f)
+        return Vector3.Distance(agent.transform.position, patrolPoints[nextPatrol].position) <= dist;
+    }
+
+    IEnumerator Patrol()
+    {
+        yield return new WaitUntil(() => reachPoint(2f));
+        yield return new WaitForSeconds(1f);
+        nextPatrol++;
+        if (nextPatrol >= patrolPoints.Count)
         {
-            nextPatrol++;
-            if (nextPatrol >= patrolPoints.Length)
-            {
-                nextPatrol = 0;
-            }
+            nextPatrol = 0;
         }
+        StartCoroutine(Patrol());
     }
 }
